@@ -677,20 +677,20 @@ $.ajax({
 
                                         dataLabels: {
                                             enabled:true,
-                                            color: '#000000',
+                                            color: 'grey',
                                             y:-25,
                                             formatter: function() {
 
                                                if(Highcharts.dateFormat('%b', new Date(this.x))=='Jun'){
 
-                                                return   '<div style=\'color: red; font-weight: bold\'><b>20'+Highcharts.dateFormat('%y', new Date(this.x))+'</b></div>';}
+                                                return   '<div style=\'color: red;\'>20'+Highcharts.dateFormat('%y', new Date(this.x))+'</div>';}
 
                                             }
                                         },
                                         marker: {
-                                            enabled: false,
-                                            symbol: 'circle',
-                                            radius: 3,
+                                            enabled: true,
+                                            symbol: 'square',
+                                            radius: 2,
                                             states: {
                                                 hover: {
                                                     enabled: true,
@@ -752,9 +752,9 @@ $.ajax({
                                 },
 
                                 series: [
-                                {type: 'line', color: '#8c3b65', name: 'Cumulative', data: monthData.total },
+                                {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.total },
                                 {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC },
-                                {type: 'line', color: '#8c3b65', name: 'Cumulative', data: monthData.totalEU },
+                                {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.totalEU },
                                 {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC }
                                 ]
                             });
