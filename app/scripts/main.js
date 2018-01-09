@@ -82,22 +82,22 @@ $.ajax({
                         total = parseInt(total) + parseInt(d[key]);
                         if(countryEUArr[key]==1){
                           totalEU = parseInt(totalEU) + parseInt(d[key]);  
-                        }
-                    }
-                }
-            }
+                      }
+                  }
+              }
+          }
 
-            monthTotals[month+'-01'] = {'totalNC': total, 'totalNCEU': totalEU, 'total': (total + totalPrev), 'totalEU': (totalEU + totalEUPrev)};
-            
-            monthData.totalNC.push({x: new Date(month+'-01'), y: total });
-            monthData.totalNCEU.push({x: new Date(month+'-01'), y: totalEU });
-            monthData.total.push({x: new Date(month+'-01'), y: total + totalPrev });
-            monthData.totalEU.push({x: new Date(month+'-01'), y: totalEU + totalEUPrev });
-            
-            totalPrev = total + totalPrev;
-            totalEUPrev = totalEU + totalEUPrev;
+          monthTotals[month+'-01'] = {'totalNC': total, 'totalNCEU': totalEU, 'total': (total + totalPrev), 'totalEU': (totalEU + totalEUPrev)};
 
-        });
+          monthData.totalNC.push({x: new Date(month+'-01'), y: total });
+          monthData.totalNCEU.push({x: new Date(month+'-01'), y: totalEU });
+          monthData.total.push({x: new Date(month+'-01'), y: total + totalPrev });
+          monthData.totalEU.push({x: new Date(month+'-01'), y: totalEU + totalEUPrev });
+
+          totalPrev = total + totalPrev;
+          totalEUPrev = totalEU + totalEUPrev;
+
+      });
 
         var mapMonth = data;
 
@@ -165,7 +165,7 @@ $.ajax({
             return new Date(d.Month).getFullYear() == maxYear;
         });
 
-  
+
 
 
         var dataPrev = []; 
@@ -173,86 +173,86 @@ $.ajax({
         var monthArray = [];
         var data = {};
 
-    var m_width = $('#map').width(),
-    width = $('#map').width(),
-    height = $('#map').height();
+        var m_width = $('#map').width(),
+        width = $('#map').width(),
+        height = $('#map').height();
 
-    var svg = d3.select('#map').append('svg')
-    .attr('preserveAspectRatio', 'xMidYMid')
-    .attr('viewBox', '0 0 ' + width + ' ' + height)
-    .attr('width', m_width)
-    .attr('height', m_width * height / width);
+        var svg = d3.select('#map').append('svg')
+        .attr('preserveAspectRatio', 'xMidYMid')
+        .attr('viewBox', '0 0 ' + width + ' ' + height)
+        .attr('width', m_width)
+        .attr('height', m_width * height / width);
 
-    var scale = width/0.9;
+        var scale = width/0.86;
 
-    var projection = d3.geo.azimuthalEquidistant()
-    .scale(scale)
-    .center([16, 52])
-    .translate([((width ) / 2), height / 2]);
+        var projection = d3.geo.azimuthalEquidistant()
+        .scale(scale)
+        .center([16.8, 52.6])
+        .translate([((width ) / 2), height / 2]);
 
-    var path = d3.geo.path()
-    .projection(projection);
+        var path = d3.geo.path()
+        .projection(projection);
 
-    var maxCircle = 30;
+        var maxCircle = 30;
 
-    var r = d3.scale.sqrt()
-    .domain([0, max])
-    .range([0, maxCircle]);
+        var r = d3.scale.sqrt()
+        .domain([0, max])
+        .range([0, maxCircle]);
 
-    var g = svg.append('g'); 
+        var g = svg.append('g'); 
 
-    d3.json('scripts/world.json', function(error, data) {
-        var mapdata = topojson.feature(data, data.objects.un_world);
+        d3.json('scripts/world.json', function(error, data) {
+            var mapdata = topojson.feature(data, data.objects.un_world);
 
-        g.append('g')
-        .attr('id', 'countries')
-        .selectAll('path')
-        .data(mapdata.features)
+            g.append('g')
+            .attr('id', 'countries')
+            .selectAll('path')
+            .data(mapdata.features)
+            .enter()
+            .append('path')
+            .attr('id', function(d) {
+                return 'COU_'+d.id;
+            })
+            .attr('class', 'country')
+            .attr('fill', function(d){if(d.id=='SYR'){return '#dbcdcc';}else{return '#d6d8d7';}})
+            .attr('stroke', '#bdbfbe')
+            .attr('stroke-width', 1)
+            .attr('d', path)
+            .on('mouseover', function() {
+                hover(this.id);
+            })
+            .on('mouseout', function() {
+                hover_off(this.id);
+            })
+
+            mapTotal();
+
+        });
+
+        var circles_group = svg.append('g'); 
+
+        var circles = circles_group.selectAll('circle')
+        .data(mapArray)
         .enter()
-        .append('path')
+        .append('circle')
+        .attr('cx', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[0] })
+        .attr('cy', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[1] })
+        .attr('r', function (d) { return r(d.Total) })
         .attr('id', function(d) {
-            return 'COU_'+d.id;
+            return d.CountryCode;
         })
-        .attr('class', 'country')
-        .attr('fill', function(d){if(d.id=='SYR'){return '#dbcdcc';}else{return '#d6d8d7';}})
-        .attr('stroke', '#bdbfbe')
-        .attr('stroke-width', 1)
-        .attr('d', path)
+        .attr('stroke', '#b96e93')
+        .attr('stroke-width', 1.5)
+        .attr('class', 'circle')
+        .attr('fill', '#b96e93')
+        .attr('fill-opacity', 0.4)
         .on('mouseover', function() {
-            hover(this.id);
+            hover('COU_'+this.id);
         })
         .on('mouseout', function() {
-            hover_off(this.id);
+            hover_off('COU_'+this.id);
         })
-
-        mapTotal();
-
-    });
-
-    var circles_group = svg.append('g'); 
-
-    var circles = circles_group.selectAll('circle')
-    .data(mapArray)
-    .enter()
-    .append('circle')
-    .attr('cx', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[0] })
-    .attr('cy', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[1] })
-    .attr('r', function (d) { return r(d.Total) })
-    .attr('id', function(d) {
-        return d.CountryCode;
-    })
-    .attr('stroke', '#b96e93')
-    .attr('stroke-width', 1.5)
-    .attr('class', 'circle')
-    .attr('fill', '#b96e93')
-    .attr('fill-opacity', 0.4)
-    .on('mouseover', function() {
-        hover('COU_'+this.id);
-    })
-    .on('mouseout', function() {
-        hover_off('COU_'+this.id);
-    })
-    ;
+        ;
 
     // add some labels
 
@@ -270,60 +270,60 @@ $.ajax({
         var id = country_id.replace('COU_', '');
 
         if(eu==1){
-         $.each(mapArray, function (index, data) {
+           $.each(mapArray, function (index, data) {
             if((data.CountryCode == id)&&(data.EU==1)){
-             d3.selectAll('#'+country_id)
-             .attr('class', 'hover');
+               d3.selectAll('#'+country_id)
+               .attr('class', 'hover');
 
-             d3.selectAll('#'+id)
-             .attr('class', 'hover_circle');
+               d3.selectAll('#'+id)
+               .attr('class', 'hover_circle');
 
-             $('#popup .name').html(data.CountryName);
-             $('#popup .figure').html(numberFormat(data.Total));
-             $('#popup').show();
+               $('#popup .name').html(data.CountryName);
+               $('#popup .figure').html(numberFormat(data.Total));
+               $('#popup').show();
 
-         }
-     });
-     } else {
-         $.each(mapArray, function (index, data) {
+           }
+       });
+       } else {
+           $.each(mapArray, function (index, data) {
 
             if(data.CountryCode == id){
 
-             d3.selectAll('#'+country_id)
-             .attr('class', 'hover');
+               d3.selectAll('#'+country_id)
+               .attr('class', 'hover');
 
-             d3.selectAll('#'+id)
-             .attr('class', 'hover_circle');
+               d3.selectAll('#'+id)
+               .attr('class', 'hover_circle');
 
-             $('#popup .name').html(data.CountryName);
-             $('#popup .figure').html(numberFormat(data.Total));
-             $('#popup').show();
-         }
-     });
-     }
+               $('#popup .name').html(data.CountryName);
+               $('#popup .figure').html(numberFormat(data.Total));
+               $('#popup').show();
+           }
+       });
+       }
 
-    }
+   }
 
 
              // parse through data and get latest year totals
-        latestYearArray.forEach(function(d){
-            var month = d.Month; 
-            delete d._id;
-            delete d.Month;
-            delete d._full_text;
-            if(init > 0 ){
-                data[month+'-01'] = sum(d, dataPrev);            
-            } else {
-                data[month+'-01'] = d;
-            }
-            init = 1;
-            dataPrev = data[month+'-01'];
-        });
+             latestYearArray.forEach(function(d){
+                var month = d.Month; 
+                delete d._id;
+                delete d.Month;
+                delete d._full_text;
+                if(init > 0 ){
+                    data[month+'-01'] = sum(d, dataPrev);            
+                } else {
+                    data[month+'-01'] = d;
+                }
+                init = 1;
+                dataPrev = data[month+'-01'];
+            });
 
-        delete latestRecord.Month;
-        var latestYearRecord = data[Object.keys(data)[Object.keys(data).length - 1]];
+             delete latestRecord.Month;
+             var latestYearRecord = data[Object.keys(data)[Object.keys(data).length - 1]];
 
-        var latestYearQuery = query;
+             var latestYearQuery = query;
 
         // refresh totals in original query
         latestYearQuery.forEach(function(d,i){
@@ -333,54 +333,54 @@ $.ajax({
             }
         });
 
-    function hover_off(country_id){
-        $('#popup').hide();
-        var id = country_id.replace('COU_', '');
+        function hover_off(country_id){
+            $('#popup').hide();
+            var id = country_id.replace('COU_', '');
 
-        d3.selectAll('#'+country_id)
-        .attr('class', '');
+            d3.selectAll('#'+country_id)
+            .attr('class', '');
 
-        d3.selectAll('#'+id)
-        .attr('class', '');
-    }
+            d3.selectAll('#'+id)
+            .attr('class', '');
+        }
 
-    function mapTotal(){
+        function mapTotal(){
 
-        $('#map_total').addClass('rdiv_selected');
-        $('#map_total_eu').removeClass('rdiv_selected');
+            $('#map_total').addClass('rdiv_selected');
+            $('#map_total_eu').removeClass('rdiv_selected');
 
-        $('#note').text('Data for 37 European countries which provide monthly information to UNHCR. To the extent possible, the figures reflect first time asylum applications, but some of the statistics are likely to include repeated applications (same or different country).');
+            $('#note').text('Data for 37 European countries which provide monthly information to UNHCR. To the extent possible, the figures reflect first time asylum applications, but some of the statistics are likely to include repeated applications (same or different country).');
 
-        var totalYear = d3.sum(latestYearQuery, function(d){
-            return d.Total;
-        });
+            var totalYear = d3.sum(latestYearQuery, function(d){
+                return d.Total;
+            });
 
-        $('#total').text(grandTotal);
-        $('#totalYear').text(totalYear);
+            $('#total').text(grandTotal);
+            $('#totalYear').text(totalYear);
 
-        var between = 'between ' + minMonthStr + ' and ' + maxMonthStr;
-        var subtitle = 'From ' + minMonthStr + ' to ' + maxMonthStr;
+            var between = 'between ' + minMonthStr + ' and ' + maxMonthStr;
+            var subtitle = 'From ' + minMonthStr + ' to ' + maxMonthStr;
 
-        $('#total_label').text(between);
-        $('#subtitle').text(subtitle);
+            $('#total_label').text(between);
+            $('#subtitle').text(subtitle);
 
-        eu = 0;
+            eu = 0;
 
-        $.each(query, function (index, data) {
-            d3.selectAll('#COU_'+data.CountryCode)
-            .transition()
-            .duration(1500)
-            .attr('fill', '#FAFAFA');
+            $.each(query, function (index, data) {
+                d3.selectAll('#COU_'+data.CountryCode)
+                .transition()
+                .duration(1500)
+                .attr('fill', '#FAFAFA');
 
-            d3.selectAll('#'+data.CountryCode)
-            .attr('opacity', '1');
+                d3.selectAll('#'+data.CountryCode)
+                .attr('opacity', '1');
 
-        });
+            });
 
-        circles.data(mapArray).transition().duration(1200).attr('r', function (d) {if(r(d.Total)>0) { return r(d.Total) } else { return 0; } })
-        .attr('opacity', function(d){
-            if(d.Total>0){ return 1; } else { return 0; };
-        });
+            circles.data(mapArray).transition().duration(1200).attr('r', function (d) {if(r(d.Total)>0) { return r(d.Total) } else { return 0; } })
+            .attr('opacity', function(d){
+                if(d.Total>0){ return 1; } else { return 0; };
+            });
 
        // update piechart
        pie.series[0].data[0].update({y: top2}, false);
@@ -399,54 +399,54 @@ $.ajax({
        chart.redraw();
 
        return false;
-    }
+   }
 
-    function mapTotalEu(){
+   function mapTotalEu(){
 
-        $('#map_total_eu').addClass('rdiv_selected');
-        $('#map_total').removeClass('rdiv_selected');
-        $('#note').text('Data for the 28 EU Member States plus Norway and Switzerland (EU+). To the extent possible, the figures reflect first time asylum applications, but some of the statistics are likely to include repeated applications (same or different country).');
+    $('#map_total_eu').addClass('rdiv_selected');
+    $('#map_total').removeClass('rdiv_selected');
+    $('#note').text('Data for the 28 EU Member States plus Norway and Switzerland (EU+). To the extent possible, the figures reflect first time asylum applications, but some of the statistics are likely to include repeated applications (same or different country).');
 
-        var totalYear = d3.sum(latestYearQuery, function(d){
-            return d.TotalEU;
-        });
+    var totalYear = d3.sum(latestYearQuery, function(d){
+        return d.TotalEU;
+    });
 
-        $('#total').text(grandEUTotal);
-        $('#totalYear').text(totalYear);
-        var between = 'between ' + minMonthStr + ' and ' + maxMonthStr;
-        var subtitle = 'From ' + minMonthStr + ' to ' + maxMonthStr;
+    $('#total').text(grandEUTotal);
+    $('#totalYear').text(totalYear);
+    var between = 'between ' + minMonthStr + ' and ' + maxMonthStr;
+    var subtitle = 'From ' + minMonthStr + ' to ' + maxMonthStr;
 
-        $('#total_label').text(between);
-        $('#subtitle').text(subtitle);
+    $('#total_label').text(between);
+    $('#subtitle').text(subtitle);
 
-        eu = 1;
+    eu = 1;
 
-        circles.transition().duration(1200).attr('r', function (d) { if(r(d.TotalEU)>0) { return r(d.TotalEU) } else { return 0; } });
+    circles.transition().duration(1200).attr('r', function (d) { if(r(d.TotalEU)>0) { return r(d.TotalEU) } else { return 0; } });
 
-        $.each(query, function (index, data) {
-            if(data.EU ==1){
-                d3.selectAll('#COU_'+data.CountryCode)
-                .transition()
-                .duration(1500)
-                .attr('fill', '#FAFAFA');
+    $.each(query, function (index, data) {
+        if(data.EU ==1){
+            d3.selectAll('#COU_'+data.CountryCode)
+            .transition()
+            .duration(1500)
+            .attr('fill', '#FAFAFA');
 
-                d3.selectAll('#'+data.CountryCode)
-                .attr('opacity', '1');
+            d3.selectAll('#'+data.CountryCode)
+            .attr('opacity', '1');
 
-            } else {
-                d3.selectAll('#COU_'+data.CountryCode)
-                .transition()
-                .duration(1500)
-                .attr('fill', '#d6d8d7');
+        } else {
+            d3.selectAll('#COU_'+data.CountryCode)
+            .transition()
+            .duration(1500)
+            .attr('fill', '#d6d8d7');
 
-                d3.selectAll('#'+data.CountryCode)
-                .transition()
-                .duration(1500)
-                .attr('opacity', '0')
-                .attr('r', '0');
+            d3.selectAll('#'+data.CountryCode)
+            .transition()
+            .duration(1500)
+            .attr('opacity', '0')
+            .attr('r', '0');
 
-            }
-        })
+        }
+    })
 
        // update piechart
        pie.series[0].data[0].update({y: topEU2}, false);
@@ -465,25 +465,25 @@ $.ajax({
        chart.redraw();
 
        return false;
-    }
+   }
 
-    $(window).resize(function() {
-        var w = $('#map').width();
-        svg.attr('width', w);
-        svg.attr('height', w * height / width);
-    });
+   $(window).resize(function() {
+    var w = $('#map').width();
+    svg.attr('width', w);
+    svg.attr('height', w * height / width);
+});
 
-    $('#map').mousemove(function(event){
-        var m = $('#map');
-        var offset = m.offset();
-        $('#popup').css('left', event.pageX-offset.left+20);
-        $('#popup').css('top', event.pageY-offset.top+5);
-    });
+   $('#map').mousemove(function(event){
+    var m = $('#map');
+    var offset = m.offset();
+    $('#popup').css('left', event.pageX-offset.left+20);
+    $('#popup').css('top', event.pageY-offset.top+5);
+});
 
-    function numberFormat(n) {
-        var parts=n.toString().split('.');
-        return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (parts[1] ? '.' + parts[1] : '');
-    }
+   function numberFormat(n) {
+    var parts=n.toString().split('.');
+    return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (parts[1] ? '.' + parts[1] : '');
+}
 
     //**************************
     // PIE CHART
@@ -531,6 +531,7 @@ $.ajax({
                   startAngle: 0,
                   allowPointSelect: false,
                   cursor: 'pointer',
+                  center: ['45%', '50%'],
                   dataLabels: {
                     distance: -25,
                     style:{ 
@@ -559,214 +560,193 @@ $.ajax({
     });
 
 
-    //**************************
-    // LINE CHART
-    //**************************
+//**************************
+// LINE CHART
+//**************************
+var chart = new Highcharts.Chart({
+    chart: {
+        renderTo: 'linechart',
+        animation: false,
+        backgroundColor:'rgba(255, 255, 255, 0.0)',  
+        type: 'area',
+        marginBottom: 45,
+        marginRight: 45
+    },
+    xAxis: {
+        type: 'datetime',
+        dateTimeLabelFormats: { //custom date formats for different scales
+            second: '%H:%M:%S',
+            minute: '%H:%M',
+            hour: '%H:%M',
+            day: '%e. %b',
+            week: '%e. %b',
+            month: '%b-%y', //month formatted as month only
+            year: '%b %Y'
+        }
+    },
+    title: { text: ''},
+    yAxis: {
+        title: { text: ''},
+        opposite: true,
+        gridLineWidth: 0.5,
+        lineColor: '#666',
+        tickColor: '#666',
+        tickWidth: 0,
+        labels: {
+            y: 3,
+            formatter: function(){
+                return numberFormat(this.value/1000)+'k';
+            },
+            enabled: true,
+            style: {
+                color: '#666',
+                font: '10px Arial'
+                }
+            },
+        },
+    legend: {enabled: false},
+    credits: {
+        enabled: false
+    },
+    tooltip: {
+        shared: true,
+        crosshairs: true,
+        enabled: true,
+        shadow: false,
+        animation: true,
+        borderRadius: 2,
+        borderWidth: 0,
+        useHTML: true,
+        hideDelay: 0,
+        style: {
+            color: '#333333',
+            padding: '0px',
+            font: '9px Arial',
+            lineHeight: '1.5',
+            textAlign: 'center'
+        },
+    formatter: function() {
+            var string = '<div style="font-size: 10px; background-color: #5C5C5C; border: 1px #333333 solid; color: white;padding: 0px 3px 0px 2px; z-index: 555"><table cellspacing="0" cellpadding="1px" class="linetooltip" width="150px">';
+            var tot = 0;
+             $.each(this.points, function (i, point) {
+                if((point.series.name=='Monthly')||(point.series.name=='Cumulative')){
+                    string = string + '<tr><td style="font-weight: normal; font-size: 9px"><span style="background-color: '+point.series.color+'; border: 1px solid grey; margin-right: 3px">&nbsp;&nbsp;</span>'+ point.series.name +'</td>';
+                    string = string + '<td><span style="font-size: 7px; color:#D6D6D6;">' +Highcharts.dateFormat('%b 20%y',point.x)+'</span></td><td align="right"><b>'+ numberFormat(point.y) +'</b></td></tr>';
+                }
+                var d = Highcharts.dateFormat('20%y-%m-01',point.x);
 
-
-     //Example 1: Each data point has a time, with a date formatter:
-     var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'linechart',
+                if(mapMonth[d]){
+                    $.each(mapMonth[d], function (index, data) {
+                        if(data.EU == 1){
+                            d3.selectAll('#'+index)
+                            .attr('r', function () { if(r(data)>0) { return r(data) } else { return 0; } });
+                        } else {
+                            d3.selectAll('#'+index)
+                            .attr('r', function () { if(r(data)>0) { return r(data) } else { return 0; } });
+                        }
+                    });
+                }
+            });
+            string=string+'</table></div>';
+            return string;
+        }
+    },
+    plotOptions: {
+        series: {
+            animation: false
+        },
+        area: {
+            fillOpacity: 0.1,
+            smoothed: true,
+            lineWidth: 1.7,
+            strokeOpacity: 0.1,
             animation: false,
-            backgroundColor:'rgba(255, 255, 255, 0.0)',  
-            type: 'area',
-            marginBottom: 45,
-              //   marginLeft: 0,
-              //   marginRight: 0,
-              //   marginTop: 0
-          },
-          xAxis: {
-            type: 'datetime',
-            dateTimeLabelFormats: { //custom date formats for different scales
-                second: '%H:%M:%S',
-                minute: '%H:%M',
-                hour: '%H:%M',
-                day: '%e. %b',
-                week: '%e. %b',
-                month: '%b-%y', //month formatted as month only
-                year: '%b %Y'
+            dataLabels: {
+                enabled:true,
+                color: 'grey',
+                y:-25,
+                formatter: function() {
+                    if(Highcharts.dateFormat('%b', new Date(this.x))=='Jun'){
+                        return   '<div style=\'color: red;\'>20'+Highcharts.dateFormat('%y', new Date(this.x))+'</div>';}
+                }
+            },
+            marker: {
+                enabled: true,
+                symbol: 'square',
+                radius: 2,
+                states: {
+                    hover: {
+                        enabled: true,
+                        radius: 3
+                    }
+                }
+            },
+            shadow: {
+                color: '#808080',
+                width: 9,
+                opacity: 0.02,
+                offsetY: 4,
+                offsetX: 0
+            },
+            states: {
+                hover: {
+                    lineWidth: 1.5
+                }
             }
         },
-        title: { text: ''},
-        yAxis: {
-            title: { text: ''},
-            
-            opposite: true,
-            gridLineWidth: 0.5,
-            lineColor: '#666',
-            tickColor: '#666',
-            tickWidth: 0,
-            labels: {
-                y: 3,
-
+        line: {
+            fillOpacity: 0.1,
+            fillColor: 'rgba(0,0,0,0.1)',
+            lineColor: 'grey',
+            smoothed: false,
+            lineWidth: 1,
+            strokeOpacity: 0.1,
+            marker: {
                 enabled: true,
-                style: {
-                    color: '#666',
-                                    //   fontWeight: 'normal',
-                                    font: '10px Arial'
-                                }
-                            }
-                            
-                        },
-                        legend: {enabled: false},
-                        credits: {
-                            enabled: false
-                        },
-                        tooltip: {
-                            shared: true,
-                            crosshairs: true,
-                            enabled: true,
-                            shadow: false,
-                            animation: true,
-                            borderRadius: 2,
-                            borderWidth: 0,
-                            useHTML: true,
-                            hideDelay: 0,
-                            style: {
-                                color: '#333333',
-                                padding: '0px',
-                                font: '9px Arial',
-                                lineHeight: '1.5',
-                                textAlign: 'center'
-                            },
-                            formatter: function() {
-                                        // If you want to see what is available in the formatter, you can
-                                        // examine the `this` variable.
-                                        var string = '<div style="font-size: 10px; background-color: #5C5C5C; border: 1px #333333 solid; color: white;padding: 0px 3px 0px 2px; z-index: 555"><table cellspacing="0" cellpadding="1px" class="linetooltip" width="150px">';
-                                        var tot = 0;
+                symbol: 'square',
+                fillColor: '#8c3b65',
+                radius: 2,
+                states: {
+                    hover: {
+                        enabled: true,
+                        radius: 3
+                    }
+                }
+            },
+            shadow: {
+                color: '#808080',
+                width: 9,
+                opacity: 0.02,
+                offsetY: 4,
+                offsetX: 0
+            },
+            states: {
+                hover: {
+                    lineWidth: 1.5
+                }
+            }
+        },
+        column: {
+            pointPadding: 0,
+            borderWidth: 1.2,
+            borderColor: '#414141'
+        }
+    },
+    series: [
+        {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.total },
+        {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC },
+        {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.totalEU },
+        {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC }
+    ]
+});
 
-                                       //$(this.points).get().reverse()).each(function(i, point) {
-                                           $.each(this.points, function (i, point) {
-                                            if((point.series.name=='Monthly')||(point.series.name=='Cumulative')){
-                                                string = string + '<tr><td style="font-weight: normal; font-size: 9px"><span style="background-color: '+point.series.color+'; border: 1px solid grey; margin-right: 3px">&nbsp;&nbsp;</span>'+ point.series.name +'</td>';
-                                                string = string + '<td><span style="font-size: 7px; color:#D6D6D6;">' +Highcharts.dateFormat('%b 20%y',point.x)+'</span></td><td align="right"><b>'+ numberFormat(point.y) +'</b></td></tr>';
-                                            }
-                                            var d = Highcharts.dateFormat('20%y-%m-01',point.x);
+chart.series[2].hide();
+chart.series[3].hide();
 
-                                            if(mapMonth[d]){
+$( document ).ready(function() {
 
-                                                $.each(mapMonth[d], function (index, data) {
-                                                    if(data.EU == 1){
-                                                        d3.selectAll('#'+index)
-                                                        .attr('r', function () { if(r(data)>0) { return r(data) } else { return 0; } });
-                                                    } else {
-                                                        d3.selectAll('#'+index)
-                                                        .attr('r', function () { if(r(data)>0) { return r(data) } else { return 0; } });
-
-                                                    }
-                                                });
-
-                                            }
-                                        });
-                                           string=string+'</table></div>';
-                
-                                           return string;
-                                    }
-                                },
-                                plotOptions: {
-                                    series: {
-                                        animation: false
-                                    },
-                                    area: {
-                                        fillOpacity: 0.1,
-                                        smoothed: true,
-                                        lineWidth: 1.7,
-                                        strokeOpacity: 0.1,
-                                        animation: false,
-
-                                        dataLabels: {
-                                            enabled:true,
-                                            color: 'grey',
-                                            y:-25,
-                                            formatter: function() {
-
-                                               if(Highcharts.dateFormat('%b', new Date(this.x))=='Jun'){
-
-                                                return   '<div style=\'color: red;\'>20'+Highcharts.dateFormat('%y', new Date(this.x))+'</div>';}
-
-                                            }
-                                        },
-                                        marker: {
-                                            enabled: true,
-                                            symbol: 'square',
-                                            radius: 2,
-                                            states: {
-                                                hover: {
-                                                    enabled: true,
-                                                    radius: 3
-                                                }
-                                            }
-                                        },
-                                        shadow: {
-                                            color: '#808080',
-                                            width: 9,
-                                            opacity: 0.02,
-                                            offsetY: 4,
-                                            offsetX: 0
-                                        },
-                                        states: {
-                                            hover: {
-                                                lineWidth: 1.5
-                                            }
-                                        }
-                                    },
-
-                                    line: {
-                                        fillOpacity: 0.1,
-                                        fillColor: 'rgba(0,0,0,0.1)',
-                                        lineColor: 'grey',
-                                        smoothed: false,
-                                        lineWidth: 1,
-                                        strokeOpacity: 0.1,
-                                        marker: {
-                                            enabled: true,
-                                            symbol: 'square',
-                                            fillColor: '#8c3b65',
-                                            radius: 2,
-                                            states: {
-                                                hover: {
-                                                    enabled: true,
-                                                    radius: 3
-                                                }
-                                            }
-                                        },
-                                        shadow: {
-                                            color: '#808080',
-                                            width: 9,
-                                            opacity: 0.02,
-                                            offsetY: 4,
-                                            offsetX: 0
-                                        },
-                                        states: {
-                                            hover: {
-                                                lineWidth: 1.5
-                                            }
-                                        }
-                                    },
-                                    column: {
-                                        pointPadding: 0,
-                                        borderWidth: 1.2,
-                                        borderColor: '#414141'
-                                    }
-                                },
-
-                                series: [
-                                {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.total },
-                                {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC },
-                                {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.totalEU },
-                                {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC }
-                                ]
-                            });
-
-    chart.series[2].hide();
-    chart.series[3].hide();
-
-
-    $( document ).ready(function() {
-
-        $('#map_total').on('click', mapTotal);
-        $('#map_total_eu').on('click', mapTotalEu);
+    $('#map_total').on('click', mapTotal);
+    $('#map_total_eu').on('click', mapTotalEu);
 
         // browser sizes
         // $('.rightpanel').height($('#map').height()-10);
@@ -783,27 +763,27 @@ $.ajax({
 
         var rightWidth = $('.container').width();
         if(rightWidth<=872){
-         $('#buttonhelper').hide();
-         $('.buttonsub').css('font-size','8px');
-     } else {
-         $('#buttonhelper').show();
-         $('.buttonsub').show();
-     }
-     if(rightWidth>360){
-         $('.buttonsub').css('font-size','10px');
-     } 
+           $('#buttonhelper').hide();
+           $('.buttonsub').css('font-size','8px');
+       } else {
+           $('#buttonhelper').show();
+           $('.buttonsub').show();
+       }
+       if(rightWidth>360){
+           $('.buttonsub').css('font-size','10px');
+       } 
 
-     if(rightWidth<300){
-         $('#total').css('font-size','35px');
-         $('#totalYear').css('font-size','28px');
-     } 
+       if(rightWidth<300){
+           $('#total').css('font-size','35px');
+           $('#totalYear').css('font-size','28px');
+       } 
 
-    });
+   });
 
 
-    (function() {
-        var oldVersion = chart.tooltip.hide;
-        chart.tooltip.hide = function() {
+(function() {
+    var oldVersion = chart.tooltip.hide;
+    chart.tooltip.hide = function() {
         // do some stuff
         var result = oldVersion.apply(this, arguments);
         // do some more stuff
@@ -814,9 +794,9 @@ $.ajax({
         };
         return result;
     };
-    })();
+})();
 
-    }
+}
 });
 
 function sum(ob1, ob2) {
@@ -825,8 +805,8 @@ function sum(ob1, ob2) {
   Object.keys(ob1).forEach(key => {
     if (ob2.hasOwnProperty(key)) {
       sum[key] = parseInt(ob1[key]) + parseInt(ob2[key])
-    }  
-  })
+  }  
+})
   return sum;
 }
 
@@ -835,9 +815,9 @@ function sumObj( obj ) {
   for( var el in obj ) {
     if(( obj.hasOwnProperty( el ))&& (el!='Month')) {
       sum += parseFloat( obj[el] );
-    }
   }
-  return sum;
+}
+return sum;
 }
 
 
