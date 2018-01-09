@@ -625,7 +625,7 @@ var chart = new Highcharts.Chart({
             lineHeight: '1.5',
             textAlign: 'center'
         },
-    formatter: function() {
+        formatter: function() {
             var string = '<div style="font-size: 10px; background-color: #5C5C5C; border: 1px #333333 solid; color: white;padding: 0px 3px 0px 2px; z-index: 555"><table cellspacing="0" cellpadding="1px" class="linetooltip" width="150px">';
             var tot = 0;
              $.each(this.points, function (i, point) {
@@ -788,9 +788,9 @@ $( document ).ready(function() {
         var result = oldVersion.apply(this, arguments);
         // do some more stuff
         if(eu==0){
-            circles.transition().duration(1200).attr('r', function (d) { if(r(d.Total)>0) { return r(d.Total) } else { return 0; } });
+            circles.transition().delay(700).duration(800).attr('r', function (d) { if(r(d.Total)>0) { return r(d.Total) } else { return 0; } });
         } else {
-            circles.transition().duration(1200).attr('r', function (d) {  if(r(d.TotalEU)>0) { return r(d.TotalEU) } else { return 0; } });
+            circles.transition().delay(700).duration(800).attr('r', function (d) {  if(r(d.TotalEU)>0) { return r(d.TotalEU) } else { return 0; } });
         };
         return result;
     };
