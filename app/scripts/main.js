@@ -683,7 +683,7 @@ var chart = new Highcharts.Chart({
             },
             shadow: {
                 color: '#808080',
-                width: 9,
+                width: 3,
                 opacity: 0.02,
                 offsetY: 4,
                 offsetX: 0
@@ -715,7 +715,7 @@ var chart = new Highcharts.Chart({
             },
             shadow: {
                 color: '#808080',
-                width: 9,
+                width: 3,
                 opacity: 0.02,
                 offsetY: 4,
                 offsetX: 0
