@@ -1,0 +1,17 @@
+{
+  "name": "dataviz-syrian-asylum-seekers",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "modernizr": "~2.8.1",
+    "d3": "v3.5.17",
+    "highcharts": "^6.0.4",
+    "odometer": "^0.4.8",
+    "topojson": "^3.0.2",
+    "unhcr-bootstrap": "https://unhcr.github.io/dataviz-styleguide-bootstrap/src/css/unhcr-bootstrap.css"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.1.0"
+  }
+}

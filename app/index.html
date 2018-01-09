@@ -1,0 +1,195 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dataviz syrian asylum seekers</title>
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="/bower_components/unhcr-bootstrap/index.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+
+  <!-- build:js scripts/vendor/modernizr.js -->
+  <script src="/bower_components/modernizr/modernizr.js"></script>
+  <!-- endbuild -->
+</head>
+<body>
+<!--[if IE]>
+  <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-md-7">
+
+      <!-- Top Title -->
+      <div class="title">
+        <div id='maintitle' style="font-size: 23px"><b>EUROPE:</b> Syrian Asylum Applications</div>
+        <div id='subtitle' style="font-size: 15px; margin-top; 5px; color; grey">&nbsp;</div>
+
+        <div id="buttonhelper">
+          <table><tr><td style="padding-bottom: 6px">Click here to toggle between views</td><td><img src="images/Arrow Left 4.png" height="30px"/></td></tr></table>
+        </div>
+      </div>
+
+      <div id="map">
+
+       <div id="map_title">
+        Cumulative Syrian Asylum Applications
+      </div>
+
+      <div style="font-size: 9px; color: #868686; position: absolute; bottom: 1px; left: 2px; z-index: 999 "   >
+      This map does not imply official endorsement or acceptance by the United Nations               </div>
+
+      <div id="popup">
+        <div class="name">CountryName</div>
+        <div class="figure">100000</div>
+      </div>
+
+      </div>
+
+      <br/>
+
+
+      </div><!-- /col-md-7 -->
+
+    <!-- rigth panel -->
+    <div class="col-md-5 rightpanel">
+      <br/>
+
+      <table id="selector" width="100%" cellpadding="3" cellspacing="0"><tbody><tr>
+        <td nowrap="nowrap"></td>
+        <td width="50%" class="rdiv" id="map_total"><a href="#" ><table width="100%"><tbody><tr><td class="icon"><i class="fa fa-file"></i></td><td class="labelselect"><h5>Europe</h5>&nbsp;<span class="buttonsub">All European countries</span></td></tr></tbody></table></a></td>
+        <td width="50%" class="rdiv" id="map_total_eu"><a href="#" ><table width="100%"><tbody><tr><td id="eu_icon"><img src="images/eu.png" height="30px"/></td><td class="labelselect"><h5>EU+ Countries</h5>&nbsp;<span class="buttonsub">Including Norway and Switzerland</span></td></tr></tbody></table></a></td>
+      </tr></tbody></table>
+
+      <br/>
+
+      <!-- Text Box -->
+      <div class='textpanel' style="padding-bottom: 5px; margin-top: 0px">
+        <h4 style='padding-bottom: 3px; border-bottom: 1px solid grey'>About</h4>
+
+        <div style="color: grey;">
+          <br/>
+         <h4><b>This page is being updated</b></h4>
+
+         <br>
+
+         First time applications for asylum in European countries by Syrians are summarised below.  Note that the majority of those who have fled the conflict are hosted in Syria's neighbouring countries.<br/><br/>In November 2016, the Asylum statistics for Serbia have been updated to show just those applicants that lodged their application.  Previously, the only information available was refugees and migrants "intention to seek asylum", which was significantly higher.  
+         <br/><br/>     </div>
+       </div>
+
+       <!-- population boxes -->
+       <div class="popboxes">
+        <h4 style='padding-bottom: 3px; border-bottom: 1px solid grey'>Total Asylum Applications</h4>
+        <table cellspacing="0" cellpadding="0" style="margin-top: 4px;">
+
+          <tr><td nowrap="nowrap"><span id="total" class="odometer" style="font-size: 40px; font-weight: bold; color: #8c3b65;"></span>
+            <td nowrap="nowrap" style="padding-left: 7px; padding-top: 5px" id="total_label">Syrian Asylum Applications between   and  </td>
+          </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0">
+          <tr><td align="left"><span id="totalYear" class="odometer" style="font-size: 36px; font-weight: bold; color: #8c3b65;"></span>
+            <td style="padding-left: 7px; padding-top: 5px">in <span id="latestYear">0000</span> only</td>
+          </tr>
+
+        </table>
+        <div style="color: grey; font-size: 9px; padding-top: 8px">
+
+          <b>Note</b>: <span id="note">Data for 38 European countries which provided monthly data to UNHCR</span>
+        </div>
+
+      </div>
+      <br/>
+
+      <!-- pie chart -->
+      <div class="piechart">
+        <h4 style='padding-bottom: 3px; border-bottom: 1px solid grey'>Top Countries</h4>
+        <table id="piechartlabels" style="color: #5a5a5a; font-size: 11px;">
+          <tr><td class="pie_legend_color"> <div style=" background-color: #8c3b65;">&nbsp;&nbsp;</div></td><td id="t1_str">Germany & Sweden</td></tr>
+          <tr><td class="pie_legend_color"> <div style=" background-color: #d6b3c3;">&nbsp;&nbsp;</div></td><td id="t2_str">Hungary, Austria, Netherlands, Greece, Denmark</td></tr>
+          <tr><td class="pie_legend_color"> <div style=" background-color: #cacccb;">&nbsp;&nbsp;</div></td><td id="t3_str">All others</td></tr>
+        </table>
+
+
+        <div id="piechart">
+
+        </div>
+      </div>
+
+  </div><!-- /col-md-5   -->
+</div>
+
+  <div class="row col-md-12">
+
+        <!-- line chart -->
+    <div class="linechart">
+
+      <h4 style='padding-bottom: 3px; border-bottom: 1px solid grey'>Evolution of Asylum Applications</h4>
+
+        <div id="linecharthelper">
+          <table><tr><td><img src="images/Arrow Down 4.png" height="28px"/></td><td style="padding-bottom: 6px">Drag on the timeline to update the map</td></tr></table>
+        </div>
+
+      <table id="monthlabels" style="color: #5a5a5a; font-size: 11px;">
+        <tr valign='middle'><td style="padding-right: 2px; padding-bottom: 7px"> <span style="background-color: #8c3b65; border: 1px solid grey; margin-right: 3px">&nbsp;&nbsp;&nbsp;</span></td><td style='padding-bottom: 5px;'>Cumulative Syrian Asylum Applications</td></tr>
+        <tr><td style="padding-right: 2px;"> <span style="background-color: #474747; border: 1px solid grey; margin-right: 3px">&nbsp;&nbsp;&nbsp;</span></td><td>New Syrian Asylum Applications by Month</td></tr>
+      </table>
+
+
+      <div id="linechart"></div>
+    </div><!-- /.linechart -->
+
+    <p style="color: #969696; font-size: 9px;"><b>Note:</b> In Turkey, 2,764,500 Syrian refugees have been registered by the authorities (as of 3 November 2016). </p>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<script>
+  (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+    function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+  e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+  e.src='https://www.google-analytics.com/analytics.js';
+  r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+  ga('create','UA-XXXXX-X');ga('send','pageview');
+</script>
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="/bower_components/jquery/dist/jquery.js"></script>
+<script src="/bower_components/modernizr/modernizr.js"></script>
+<script src="/bower_components/d3/d3.js"></script>
+<script src="/bower_components/highcharts/highcharts.js"></script>
+<script src="/bower_components/odometer/odometer.js"></script>
+<script src="/bower_components/topojson/topojson.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js scripts/main.js -->
+<script src="scripts/main.js"></script>
+<!-- endbuild -->
+</body>
+</html>
