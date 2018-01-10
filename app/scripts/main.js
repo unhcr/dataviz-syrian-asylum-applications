@@ -1,3 +1,5 @@
+
+
 //**************************
 // MAP
 //**************************
@@ -7,6 +9,8 @@ $('#popup').hide();
 var eu = 0;
 
 var monthStr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+var selectedCountry = null; 
 
 var labels = [
 {name: 'Mediterranean Sea', lat: 18.2, lon: 34.2}, 
@@ -26,6 +30,10 @@ query.forEach(function(d,i){
 });
 
 $.ajax({
+    //**************************
+    // DATA SOURCE (LOCAL or CKAN)
+    //**************************
+    // url: 'scripts/data.json', // local data
     url: 'https://ckanviz.swige.unhcr.org/api/action/datastore_search_sql?sql=SELECT%20*%20from%20%2286b73fc2-223a-41ff-a256-178dd525f33a%22%20order%20by%20%22Month%22%20asc',
     success: function(response) {
         var records = response.result.total;
@@ -35,11 +43,6 @@ $.ajax({
         dataArray = dataArray.filter(function(d){
             return d.Month.length > 0;
         });
-
-        //**************************
-        // HOW TO ROLL-UP AND NEST THE DATA FOR THE LINE CHART ??!!
-        // both eu/non-eu and cumulative/non-cumultive
-        //**************************
 
         var data = {};
         var dataNC = {}; // non-cumulative
@@ -99,163 +102,174 @@ $.ajax({
 
       });
 
-        var mapMonth = data;
+    var mapMonth = data;
 
-        var latestRecord = mapMonth[Object.keys(mapMonth)[Object.keys(mapMonth).length - 1]];
+    var latestRecord = mapMonth[Object.keys(mapMonth)[Object.keys(mapMonth).length - 1]];
 
-        // refresh totals in original query
-        query.forEach(function(d,i){
-            d.Total = latestRecord[d.CountryCode];
-            if(d.EU==1){
-                d.TotalEU = latestRecord[d.CountryCode];
-            }
-        });
+    // refresh totals in original query
+    query.forEach(function(d,i){
+        d.Total = latestRecord[d.CountryCode];
+        if(d.EU==1){
+            d.TotalEU = latestRecord[d.CountryCode];
+        }
+    });
 
-        var minMonth = d3.min(monthArray, function(d){
-            return d;
-        });
+    var minMonth = d3.min(monthArray, function(d){
+        return d;
+    });
 
-        var maxMonth = d3.max(monthArray, function(d){
-            return d;
-        });
+    var maxMonth = d3.max(monthArray, function(d){
+        return d;
+    });
 
-        var maxMonthStr = monthStr[new Date(maxMonth).getMonth()] + ' ' + new Date(maxMonth).getFullYear();
-        var minMonthStr = monthStr[new Date(minMonth).getMonth()] + ' ' + new Date(minMonth).getFullYear();
-        var maxYear = new Date(maxMonth).getFullYear();
-        var minYear = new Date(minMonth).getFullYear();
+    var maxMonthStr = monthStr[new Date(maxMonth).getMonth()] + ' ' + new Date(maxMonth).getFullYear();
+    var minMonthStr = monthStr[new Date(minMonth).getMonth()] + ' ' + new Date(minMonth).getFullYear();
+    var maxYear = new Date(maxMonth).getFullYear();
+    var minYear = new Date(minMonth).getFullYear();
 
-        $('#latestYear').text(maxYear);
+    $('#latestYear').text(maxYear);
 
-        var cumulativeQuery = query; 
+    var cumulativeQuery = query; 
 
-        var mapArray = [];
-        // refresh totals in original query
-        cumulativeQuery.forEach(function(d,i){
+    var mapArray = [];
+    // refresh totals in original query
+    cumulativeQuery.forEach(function(d,i){
 
-            var x = {};
+        var x = {};
 
-            x.Total = latestRecord[d.CountryCode];
+        x.Total = latestRecord[d.CountryCode];
 
-            if(d.EU==1){
-                x.TotalEU = latestRecord[d.CountryCode];
-            }
+        if(d.EU==1){
+            x.TotalEU = latestRecord[d.CountryCode];
+        }
 
-            x.CountryCode = d.CountryCode; 
-            x.CountryName = d.CountryName
-            x.EU = d.EU;
-            x.centroid_lat = d.centroid_lat;
-            x.centroid_lon = d.centroid_lon;
+        x.CountryCode = d.CountryCode; 
+        x.CountryName = d.CountryName
+        x.EU = d.EU;
+        x.centroid_lat = d.centroid_lat;
+        x.centroid_lon = d.centroid_lon;
 
-            mapArray.push(x);
+        mapArray.push(x);
 
-        });
+    });
 
-        var max = Math.max.apply(Math,query.map(function(o){return o.Total;}));
+    var max = Math.max.apply(Math,query.map(function(o){return o.Total;}));
 
-        var grandTotal = d3.sum(query, function(d){
-            return d.Total;
-        });
+    var grandTotal = d3.sum(query, function(d){
+        return d.Total;
+    });
 
-        var grandEUTotal = d3.sum(query, function(d){
-            return d.TotalEU;
-        });
+    var grandEUTotal = d3.sum(query, function(d){
+        return d.TotalEU;
+    });
 
-        // get latest year totals
-        var latestYearArray = dataArray.filter(function(d){
-            return new Date(d.Month).getFullYear() == maxYear;
-        });
-
-
+    // get latest year totals
+    var latestYearArray = dataArray.filter(function(d){
+        return new Date(d.Month).getFullYear() == maxYear;
+    });
 
 
-        var dataPrev = []; 
-        var init = 0;
-        var monthArray = [];
-        var data = {};
+    var dataPrev = []; 
+    var init = 0;
+    var monthArray = [];
+    var data = {};
 
-        var m_width = $('#map').width(),
-        width = $('#map').width(),
-        height = $('#map').height();
+    var m_width = $('#map').width(),
+    width = $('#map').width(),
+    height = $('#map').height();
 
-        var svg = d3.select('#map').append('svg')
-        .attr('preserveAspectRatio', 'xMidYMid')
-        .attr('viewBox', '0 0 ' + width + ' ' + height)
-        .attr('width', m_width)
-        .attr('height', m_width * height / width);
+    var svg = d3.select('#map').append('svg')
+    .attr('preserveAspectRatio', 'xMidYMid')
+    .attr('viewBox', '0 0 ' + width + ' ' + height)
+    .attr('width', m_width)
+    .attr('height', m_width * height / width);
 
-        var scale = width/0.86;
+    var bg = svg.append('rect')
+    .attr('id', 'bg')
+    .attr('width', m_width)
+    .attr('height', m_width * height / width)
+    .attr('opacity', 0)
+    .on('click', function(d){
+       if(eu==1){
+            mapTotalEu();
+       } else {
+            mapTotal();          
+       }
+    });
 
-        var projection = d3.geo.azimuthalEquidistant()
-        .scale(scale)
-        .center([16.8, 52.6])
-        .translate([((width ) / 2), height / 2]);
+    var scale = width/0.86;
 
-        var path = d3.geo.path()
-        .projection(projection);
+    var projection = d3.geo.azimuthalEquidistant()
+    .scale(scale)
+    .center([16.8, 52.6])
+    .translate([((width ) / 2), height / 2]);
 
-        var maxCircle = 30;
+    var path = d3.geo.path()
+    .projection(projection);
 
-        var r = d3.scale.sqrt()
-        .domain([0, max])
-        .range([0, maxCircle]);
+    var maxCircle = 30;
 
-        var g = svg.append('g'); 
+    var r = d3.scale.sqrt()
+    .domain([0, max])
+    .range([0, maxCircle]);
 
-        d3.json('scripts/world.json', function(error, data) {
-            var mapdata = topojson.feature(data, data.objects.un_world);
+    var g = svg.append('g'); 
 
-            g.append('g')
-            .attr('id', 'countries')
-            .selectAll('path')
-            .data(mapdata.features)
-            .enter()
-            .append('path')
-            .attr('id', function(d) {
-                return 'COU_'+d.id;
-            })
-            .attr('class', 'country')
-            .attr('fill', function(d){if(d.id=='SYR'){return '#dbcdcc';}else{return '#d6d8d7';}})
-            .attr('stroke', '#bdbfbe')
-            .attr('stroke-width', 1)
-            .attr('d', path)
-            .on('mouseover', function() {
-                hover(this.id);
-            })
-            .on('mouseout', function() {
-                hover_off(this.id);
-            })
+    d3.json('scripts/world.json', function(error, data) {
+        var mapdata = topojson.feature(data, data.objects.un_world);
 
-            mapTotal();
-
-        });
-
-        var circles_group = svg.append('g'); 
-
-        var circles = circles_group.selectAll('circle')
-        .data(mapArray)
+        g.append('g')
+        .attr('id', 'countries')
+        .selectAll('path')
+        .data(mapdata.features)
         .enter()
-        .append('circle')
-        .attr('cx', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[0] })
-        .attr('cy', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[1] })
-        .attr('r', function (d) { return r(d.Total) })
+        .append('path')
         .attr('id', function(d) {
-            return d.CountryCode;
+            return 'COU_'+d.id;
         })
-        .attr('stroke', '#b96e93')
-        .attr('stroke-width', 1.5)
-        .attr('class', 'circle')
-        .attr('fill', '#b96e93')
-        .attr('fill-opacity', 0.4)
+        .attr('class', 'country')
+        .attr('fill', function(d){if(d.id=='SYR'){return '#dbcdcc';}else{return '#d6d8d7';}})
+        .attr('stroke', '#bdbfbe')
+        .attr('stroke-width', 1)
+        .attr('d', path)
         .on('mouseover', function() {
-            hover('COU_'+this.id);
+            hover(this.id);
         })
         .on('mouseout', function() {
-            hover_off('COU_'+this.id);
+            hover_off(this.id);
         })
-        ;
+        .on('click', function(d){ return selectCountry(d.id) });
+
+        mapTotal();
+
+    });
+
+    var circles_group = svg.append('g'); 
+
+    var circles = circles_group.selectAll('circle')
+    .data(mapArray)
+    .enter()
+    .append('circle')
+    .attr('cx', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[0] })
+    .attr('cy', function (d) { return projection([d.centroid_lon, d.centroid_lat ])[1] })
+    .attr('r', function (d) { return r(d.Total) })
+    .attr('id', function(d) {
+        return d.CountryCode;
+    })
+    .attr('stroke', '#b96e93')
+    .attr('stroke-width', 1.5)
+    .attr('class', 'circle')
+    .attr('fill', '#b96e93')
+    .attr('fill-opacity', 0.4)
+    .on('mouseover', function() {
+        hover('COU_'+this.id);
+    })
+    .on('mouseout', function() {
+        hover_off('COU_'+this.id);
+    })
+    .on('click', function(d){ return selectCountry(d.CountryCode) });
 
     // add some labels
-
     svg.selectAll('.placelabel')
     .data(labels)
     .enter()
@@ -301,29 +315,27 @@ $.ajax({
            }
        });
        }
+    }
 
-   }
+    // parse through data and get latest year totals
+    latestYearArray.forEach(function(d){
+        var month = d.Month; 
+        delete d._id;
+        // delete d.Month;
+        delete d._full_text;
+        if(init > 0 ){
+            data[month+'-01'] = sum(d, dataPrev);            
+        } else {
+            data[month+'-01'] = d;
+        }
+        init = 1;
+        dataPrev = data[month+'-01'];
+    });
 
+    delete latestRecord.Month;
+    var latestYearRecord = data[Object.keys(data)[Object.keys(data).length - 1]];
 
-             // parse through data and get latest year totals
-             latestYearArray.forEach(function(d){
-                var month = d.Month; 
-                delete d._id;
-                delete d.Month;
-                delete d._full_text;
-                if(init > 0 ){
-                    data[month+'-01'] = sum(d, dataPrev);            
-                } else {
-                    data[month+'-01'] = d;
-                }
-                init = 1;
-                dataPrev = data[month+'-01'];
-            });
-
-             delete latestRecord.Month;
-             var latestYearRecord = data[Object.keys(data)[Object.keys(data).length - 1]];
-
-             var latestYearQuery = query;
+    var latestYearQuery = query;
 
         // refresh totals in original query
         latestYearQuery.forEach(function(d,i){
@@ -345,6 +357,8 @@ $.ajax({
         }
 
         function mapTotal(){
+
+            reset();
 
             $('#map_total').addClass('rdiv_selected');
             $('#map_total_eu').removeClass('rdiv_selected');
@@ -402,6 +416,8 @@ $.ajax({
    }
 
    function mapTotalEu(){
+
+    reset();
 
     $('#map_total_eu').addClass('rdiv_selected');
     $('#map_total').removeClass('rdiv_selected');
@@ -466,6 +482,112 @@ $.ajax({
 
        return false;
    }
+
+   function selectCountry(iso){
+        var countryData = {};
+        countryData.totalNC = [];
+        countryData.totalNCEU = [];
+        countryData.total = [];
+        countryData.totalEU = [];
+        var selectedCountry = iso;
+        var totalPrev = 0;
+        var total = 0;
+        var totalEUPrev = 0;
+        var month = '';
+
+        dataArray.forEach(function(d){
+
+            var month = d.Month; 
+            var total = parseInt(d[selectedCountry]);
+
+            var totalEU = 0;
+            if(countryEUArr[selectedCountry]==1){
+              totalEU = total;  
+            }
+
+            countryData.total.push({x: new Date(month+'-01'), y: total + totalPrev });
+            countryData.totalEU.push({x: new Date(month+'-01'), y: totalEU + totalEUPrev });
+            countryData.totalNC.push({x: new Date(month+'-01'), y: total });
+            countryData.totalNCEU.push({x: new Date(month+'-01'), y: totalEU });
+
+            totalPrev = total + totalPrev;
+            totalEUPrev = totalEU + totalEUPrev;
+        });
+
+        var countries = svg.select('#countries')
+        .selectAll('path');
+
+        if(totalPrev>0){
+           chart.series[0].setVisible (false, false);
+           chart.series[1].setVisible (false, false);
+           chart.series[2].setVisible (false, false);
+           chart.series[3].setVisible (false, false);     
+
+           chart.series[4].setVisible (true, false);
+           chart.series[5].setVisible (true, false);
+           chart.series[4].setData(countryData.total);
+           chart.series[5].setData(countryData.totalNC); 
+
+           // set line chart title
+            var country = query.filter(function(d){ return d.CountryCode == iso; })[0];
+            $('#linechart_title').text('Evolution of Asylum Applications in '+ country.CountryName);
+
+            // fade out other countries
+
+            countries.attr('opacity', function(d){ 
+                if(d.id==selectedCountry){ 
+                    return 1;
+                } else {
+                    return 0.8;
+                }
+            });
+
+            var circles = svg.selectAll('circle').attr('opacity', 0.4);
+
+            circles.attr('opacity', function(d){ 
+                if(d.CountryCode==selectedCountry){ 
+                    return 1;
+                } else {
+                    return 0.5;
+                }
+            });
+
+            var lYear = d3.sum(latestYearArray, function(d){
+                return d[selectedCountry];
+            });
+
+
+            var lTotal = d3.sum(dataArray, function(d){
+                return d[selectedCountry];
+            });
+
+            $('#total').text(lTotal);
+            $('#totalYear').text(lYear);
+
+        } else {
+
+           if(eu==1){
+                mapTotalEu();
+           } else {
+                mapTotal();          
+           }
+
+        }
+
+
+    }
+
+    function reset(){
+        svg.select('#countries')
+           .selectAll('path')
+           .attr('opacity', '1');
+
+           chart.series[4].setVisible (false, false);
+           chart.series[5].setVisible (false, false);
+           chart.series[0].setVisible (true, false);
+           chart.series[1].setVisible (true, false);
+           $('#linechart_title').text('Evolution of Asylum Applications');
+    }
 
    $(window).resize(function() {
     var w = $('#map').width();
@@ -736,7 +858,9 @@ var chart = new Highcharts.Chart({
         {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.total },
         {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC },
         {type: 'area', color: '#8c3b65', name: 'Cumulative', data: monthData.totalEU },
-        {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC }
+        {type: 'column', color: '#474747', name: 'Monthly', data: monthData.totalNC },
+        {type: 'area', color: '#8c3b65', name: 'Cumulative', data: [] },
+        {type: 'column', color: '#474747', name: 'Monthly', data: [] }
     ]
 });
 
@@ -764,9 +888,11 @@ $( document ).ready(function() {
         var rightWidth = $('.container').width();
         if(rightWidth<=872){
            $('#buttonhelper').hide();
+           $('#linecharthelper').hide();
            $('.buttonsub').css('font-size','8px');
        } else {
            $('#buttonhelper').show();
+           $('#linecharthelper').show();  
            $('.buttonsub').show();
        }
        if(rightWidth>360){

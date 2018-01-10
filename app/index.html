@@ -51,13 +51,17 @@
         Cumulative Syrian Asylum Applications
       </div>
 
-      <div style="font-size: 9px; color: #868686; position: absolute; bottom: 1px; left: 2px; z-index: 999 "   >
+      <div style="font-size: 9px; color: #868686; position: absolute; bottom: 3px; left: 6px; z-index: 999 "   >
       This map does not imply official endorsement or acceptance by the United Nations               </div>
 
       <div id="popup">
         <div class="name">CountryName</div>
         <div class="figure">100000</div>
       </div>
+
+        <div id="maphelper">
+          <table><tr><td><img src="images/Arrow Up 4.png" height="28px"/></td><td style="padding-bottom: 6px">Click on a country to filter</td></tr></table>
+        </div>
 
       </div>
 
@@ -133,12 +137,13 @@
   </div><!-- /col-md-5   -->
 </div>
 
-  <div class="row col-md-12">
+  <div class="row">
+  <div class="col-md-12">
 
         <!-- line chart -->
     <div class="linechart">
 
-      <h4 style='padding-bottom: 3px; border-bottom: 1px solid grey'>Evolution of Asylum Applications</h4>
+      <h4 id="linechart_title" style='padding-bottom: 3px; border-bottom: 1px solid grey'>Evolution of Asylum Applications</h4>
 
         <div id="linecharthelper">
           <table><tr><td><img src="images/Arrow Down 4.png" height="28px"/></td><td style="padding-bottom: 6px">Drag on the timeline to update the map</td></tr></table>
@@ -155,6 +160,7 @@
 
     <p style="color: #969696; font-size: 9px;"><b>Note:</b> In Turkey, 2,764,500 Syrian refugees have been registered by the authorities (as of 3 November 2016). </p>
 
+  </div>
   </div>
 </div>
 
@@ -175,6 +181,11 @@
   e.src='https://www.google-analytics.com/analytics.js';
   r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
   ga('create','UA-XXXXX-X');ga('send','pageview');
+
+  window.odometerOptions = {
+  duration: 300, // Change how long the javascript expects the CSS animation to take
+};
+
 </script>
 
 <!-- build:js scripts/vendor.js -->
