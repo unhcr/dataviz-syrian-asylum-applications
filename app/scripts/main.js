@@ -197,7 +197,7 @@ $.ajax({
        }
     });
 
-    var scale = width/0.86;
+    var scale = width/1.05;
 
     var projection = d3.geo.azimuthalEquidistant()
     .scale(scale)
@@ -561,7 +561,7 @@ $.ajax({
                 return d[selectedCountry];
             });
 
-            $('#total').text(lTotal);
+            $('#total').html(lTotal);
             $('#totalYear').text(lYear);
 
         } else {
