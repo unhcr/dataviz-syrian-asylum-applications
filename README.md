@@ -1,5 +1,5 @@
 # dataviz-syrian-asylum-applications
-Interactive data visualisation of Syrian asylum applications in Europe.<br/><br/>
+Interactive data visualisation of Syrian asylum applications in Europe. <br/><br/><a href="https://unhcr.github.io/dataviz-syrian-asylum-applications/dist/">https://unhcr.github.io/dataviz-syrian-asylum-applications/dist/</a><br/><br/>
 ![thumbnail.jpg](https://github.com/unhcr/dataviz-syrian-asylum-applications/raw/master/app/images/thumbnail.jpg)
 ***
 
