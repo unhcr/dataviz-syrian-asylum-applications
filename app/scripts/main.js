@@ -197,11 +197,11 @@ $.ajax({
        }
     });
 
-    var scale = width/1.05;
+    var scale = width/1.09;
 
     var projection = d3.geo.azimuthalEquidistant()
     .scale(scale)
-    .center([16.8, 52.6])
+    .center([16.8, 50.6])
     .translate([((width ) / 2), height / 2]);
 
     var path = d3.geo.path()
@@ -691,7 +691,7 @@ var chart = new Highcharts.Chart({
         animation: false,
         backgroundColor:'rgba(255, 255, 255, 0.0)',  
         type: 'area',
-        marginBottom: 45,
+        marginBottom: 35,
         marginRight: 45
     },
     xAxis: {
