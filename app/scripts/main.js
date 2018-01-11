@@ -885,7 +885,7 @@ $( document ).ready(function() {
         var lineHeight = $('#linechart').height();
         // chart.setSize($('#linechart').width(), newHeight, doAnimation = false);
 
-        var rightWidth = $('.container').width();
+        var rightWidth = $('.main').width();
         if(rightWidth<=872){
            $('#buttonhelper').hide();
            $('#linecharthelper').hide();
