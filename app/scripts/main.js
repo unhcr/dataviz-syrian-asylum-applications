@@ -16,7 +16,7 @@ var labels = [
 {name: 'Mediterranean Sea', lat: 18.2, lon: 34.2}, 
 {name: 'Black Sea', lat: 34.4, lon: 43.1}, 
 {name: 'North Sea', lat: 2.98, lon: 56.3}, 
-{name: 'Norweigen Sea', lat: 0.7, lon: 68.8}, 
+// {name: 'Norweigen Sea', lat: 0.7, lon: 68.8}, 
 {name: 'ATLANTIC OCEAN', lat: -12, lon: 47},
 ];
 
@@ -229,7 +229,7 @@ $.ajax({
         })
         .attr('class', 'country')
         .attr('fill', function(d){if(d.id=='SYR'){return '#dbcdcc';}else{return '#d6d8d7';}})
-        .attr('stroke', '#bdbfbe')
+        .attr('stroke', '#B8B8B8')
         .attr('stroke-width', 1)
         .attr('d', path)
         .on('mouseover', function() {
@@ -256,7 +256,7 @@ $.ajax({
     .attr('id', function(d) {
         return d.CountryCode;
     })
-    .attr('stroke', '#b96e93')
+    .attr('stroke', '#792d52')
     .attr('stroke-width', 1.5)
     .attr('class', 'circle')
     .attr('fill', '#b96e93')
